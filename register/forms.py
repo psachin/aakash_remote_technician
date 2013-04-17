@@ -8,11 +8,12 @@ from string import letters
 
 class Register(UserCreationForm):
     """my form"""
-    serial_num = forms.CharField(max_length=10)
+    serial_num = forms.CharField(max_length=10, required=True)
+    phone_num = forms.IntegerField(max_value=9999999999, required=True)
     
     class Meta:
         model = User
-        fields = ('username','first_name','last_name','email','serial_num','password1','password2',)
+        fields = ('username','first_name','last_name','email','serial_num','phone_num','password1','password2')
 
         
     def save(self, commit=True):
@@ -29,6 +30,7 @@ class Register(UserCreationForm):
         if commit:
             profile = user.get_profile()
             profile.serial_num = self.cleaned_data['serial_num']
+            profile.phone_num = self.cleaned_data['phone_num']
             # profile.serial_num = ''.join([choice(letters) for i in xrange(12)])
             #user_profile = UserProfile(user=user, serial_num=self.cleaned_data['serial_num'])
             profile.save()

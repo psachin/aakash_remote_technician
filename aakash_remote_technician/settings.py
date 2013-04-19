@@ -155,3 +155,4 @@ LOGGING = {
 }
 
 AUTH_PROFILE_MODULE = 'register.UserProfile'
+#LOGIN_REDIRECT_URL = '/profiles/home'

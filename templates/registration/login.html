@@ -1,3 +1,6 @@
+{% extends "base_site.html" %}
+{% load i18n %}
+
 {% block content %}
 
     {% if form.errors %}
@@ -5,7 +8,7 @@
         again.</p>
     {% endif %}
 
-    <form method="post" action="{% url django.contrib.auth.views.login %}">
+    <form method="post" action="{% url 'django.contrib.auth.views.login' %}">
         {% csrf_token %}
         <table>
             <tr>
@@ -22,4 +25,5 @@
     </form>
 
 <a href="/register">Register here</a>
+<p>Forget password?<a href="/resetpassword"> Reset password</a><p>
 {% endblock %}

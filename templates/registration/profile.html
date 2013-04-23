@@ -1,8 +1,23 @@
+{% extends "base_site.html" %}
+{% load i18n %}
+{% block content %}
 <h1>Welcome {{ user.username }}!</h1>
+{% if user_group %}
+you belongs to 
+{% for groups in user_group %}
+<b>{{groups}}</b>
+{% endfor%} group
+{% else %}
+you don't belong to any group
+{% endif %}
+
 <h3><u>Details</u></h3>
-<p>Your first name: {{ user.first_name }}</p>
-<p>Your first name: {{ user.last_name }}</p>
-<p>Your email: {{ user.email }}</p>
-<p>Your device serial number: {{ users_profile.serial_num }}</p>
-<p>Your Phone number: {{ users_profile.phone_num }}</p>
+<p>First name: <b>{{ user.first_name }}</b></p>
+<p>Last name: <b>{{ user.last_name }}</b></p>
+<p>Email: <b>{{ user.email }}</b></p>
+<p>Device serial number: <b>{{ users_profile.serial_num }}</b></p>
+<p>Phone number: <b>{{ users_profile.phone_num }}</b></p>
+
 <p><a href="/logout">logout</a><p>
+{% endblock %}
+

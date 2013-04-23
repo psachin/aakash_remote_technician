@@ -1,0 +1,15 @@
+{% extends "base_site.html" %}
+{% load i18n %}
+
+{% block content %}
+{% if users %}
+<p><b>List of logged in users</b></p>
+<ul class="user-list">
+    {% for user in users %}
+    <li>{{ user }}</li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No user logged in</p>
+{% endif %}
+{% endblock %}

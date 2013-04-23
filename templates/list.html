@@ -1,0 +1,33 @@
+{% extends "base_site.html" %}
+{% load i18n %}
+
+{% block content %}
+<h1>List of registered users</h1>
+<table align=left border=1>
+  <tr>
+    <td><b>ID</b></td>
+    <td><b>Username</b></td>
+    <td><b>groups</b></td>
+  </tr>
+  {% for user in users %}
+  <tr>
+    <td> {{ user.id }}</td>
+    <td> {{ user.username }}</td>
+    <td> 
+      {% if user.groups.all %}
+      {% for groups in user.groups.all %}
+      {{groups}}
+      {% endfor %}
+      {% else %}
+      None
+      {% endif %}
+    </td>
+    
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}
+
+<!-- {{ user_profile.serial_num }} -->
+<!-- {{ user_profile.user }} -->
+

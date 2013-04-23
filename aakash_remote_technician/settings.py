@@ -66,6 +66,7 @@ STATIC_URL = '/static/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
+    'static',
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -155,4 +156,5 @@ LOGGING = {
 }
 
 AUTH_PROFILE_MODULE = 'register.UserProfile'
+LOGIN_URL='/login/'
 #LOGIN_REDIRECT_URL = '/profiles/home'

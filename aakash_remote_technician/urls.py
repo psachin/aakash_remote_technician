@@ -1,26 +1,32 @@
 from django.conf.urls import patterns, include, url
-from register.views import profile, index, register, user_home, logout_view
-#from django.contrib.auth.views import login, logout
-
+from django.contrib.auth.views import password_reset_done
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
                        # Examples
-                       url(r'^$',index),
+                       url(r'^$','register.views.index'),
                        # url(r'^aakash_remote_technician/', include('aakash_remote_technician.register.urls')),
                        
                        # Uncomment the admin/doc line below to enable admin documentation
                        url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-                       
                        # Uncomment the next line to enable the admin
                        url(r'^admin/', include(admin.site.urls)),
-                       url(r'^profile/(?P<pID>\d+)/$',profile),
-                       url(r'^register/$',register),
+                       # custom URLs
+                       # url(r'^list/(?P<pID>\d+)/$','register.views.list'),
+                       url(r'^list/$','register.views.list'),
+                       url(r'^register/$','register.views.register'),
+                       url(r'^tr/$','register.views.technician_register'),
                        url(r'^login/$','django.contrib.auth.views.login', 
                            {'template_name': 'registration/login.html'}
                            ),
-                       url(r'^logout/$',logout_view),
-                       url(r'^profiles/home', user_home),
+                       url(r'^logout/$','register.views.logout_view'),
+                       url(r'^profiles/home', 'register.views.user_home'),
+                       url(r'^logged_in', 'register.views.render_logged_in_user_list'),
+                       # password reset
+                       url(r'resetpassword/passwordreset/$','django.contrib.auth.views.password_reset_done'),
+                       url(r'resetpassword/$','django.contrib.auth.views.password_reset'),
+                       url(r'resetpassword/done/$','django.contrib.auth.views.password_reset_complete'),
+                       url(r'resetpassword/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)$','django.contrib.auth.views.password_reset_confirm'),
                        )

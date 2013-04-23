@@ -1,0 +1,6 @@
+* Aakash Remote Technician
+This is temporary repo
+
+** About
+   A webapp for remotely debugging GNU/linux on Aakash.
+   

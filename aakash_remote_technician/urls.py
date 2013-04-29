@@ -6,7 +6,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
                        # Examples
-                       url(r'^$','register.views.index'),
+                       #url(r'^$','register.views.index'),
                        # url(r'^aakash_remote_technician/', include('aakash_remote_technician.register.urls')),
                        
                        # Uncomment the admin/doc line below to enable admin documentation
@@ -18,7 +18,7 @@ urlpatterns = patterns('',
                        url(r'^list/$','register.views.list'),
                        url(r'^register/$','register.views.register'),
                        url(r'^tr/$','register.views.technician_register'),
-                       url(r'^login/$','django.contrib.auth.views.login', 
+                       url(r'^$','django.contrib.auth.views.login', 
                            {'template_name': 'registration/login.html'}
                            ),
                        url(r'^logout/$','register.views.logout_view'),

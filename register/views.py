@@ -26,12 +26,13 @@ def register(request):
     # user is submitting the form
     if request.method == 'POST':
         form = Register(request.POST)
+        #profile = request.user.get_profile()
         if form.is_valid():
             user = form.save()
             form.group_save()
             if user:
-                #success="<html>sign_up_success</html>"
-                #return HttpResponse(success)
+                # success="<html>sign_up_success</html>"
+                # return HttpResponse(success)
                 #messages.info(request, "Thanks for registering. You are now logged in.")
                 user = authenticate(username=request.POST['username'],
                                         password=request.POST['password1'])
@@ -101,7 +102,7 @@ def user_home(request):
     users_profile = request.user.get_profile()
     user_group = request.user.groups.values_list('name',flat=True)
     for groups in user_group:
-        print groups
+        print "Group: %s" % (groups)
     
     context = {'users':users, 
                'users_profile':users_profile,
@@ -119,7 +120,7 @@ def render_logged_in_user_list(request):
 
 def logout_view(request):
     logout_then_login(request)
-    return HttpResponseRedirect('/login')
+    return HttpResponseRedirect('/')
 
 
 

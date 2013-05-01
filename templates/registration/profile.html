@@ -12,17 +12,20 @@ you don't belong to any group
 {% endif %}
 
 
-
 <h3><u>Details</u></h3>
 <p>First name: <b>{{ user.first_name }}</b></p>
 <p>Last name: <b>{{ user.last_name }}</b></p>
 <p>Email: <b>{{ user.email }}</b></p>
-<p>Device serial number: <b>{{ dev_obj.serial_num }}</b></p>
 <p>Phone number: <b>{{ dev_obj.phone_num }}</b></p>
-
+{% for groups in user_group %}
+{% ifequal groups "aakash_user" %}
+<p>Device serial number: <b>{{ dev_obj.serial_num }}</b></p>
 <p><a href="/complaint/">log a complaint</a><p>
-<p><a href="/logout">logout</a><p>
-
+  {% endifequal %}
+  {% endfor %}
+  
+<p></p>><a href="/logout">logout</a><p>
+    
 
 
 {% endblock %}

@@ -17,7 +17,7 @@ urlpatterns = patterns('',
                        # url(r'^list/(?P<pID>\d+)/$','register.views.list'),
                        url(r'^list/$','register.views.list'),
                        url(r'^register/$','register.views.register'),
-                       url(r'^tr/$','register.views.technician_register'),
+                       url(r'^tr/$','register.views.register_technician'),
                        url(r'^$','django.contrib.auth.views.login', 
                            {'template_name': 'registration/login.html'}
                            ),

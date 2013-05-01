@@ -69,6 +69,7 @@ class RegisterDeviceUser(UserCreationForm):
         # print self.cleaned_data['phone_num']
         try:
             DeviceUser.objects.get(phone_num=self.cleaned_data['phone_num'])
+            print "register user in try"
         except DeviceUser.DoesNotExist:
             return self.cleaned_data["phone_num"]
         raise forms.ValidationError(("Phone number already exist"))
@@ -153,6 +154,128 @@ class RegisterDeviceUser(UserCreationForm):
                 raise forms.ValidationError("Saving of DeviceUser failed")
         return user, deviceuser
 
+class RegisterTechnician(UserCreationForm):
+    """
+    registration form for technician
+    """
+    email = forms.CharField(max_length=75, required=True)
+    phone_num = forms.IntegerField(max_value=9999999999, required=True)
+    agree = forms.BooleanField(
+        error_messages={'required': 'You must accept the agreement inorder to register'},
+        widget=forms.CheckboxInput(),
+        label="I agree the rules",
+        )
+
+    # error_messages = {
+    #     'duplicate_sr_num': _("Serial number already exists."),
+    #     'password_mismatch': _("The two password fields didn't match."),
+    # }
+
+    class Meta:
+        model = User
+        fields = ('username','first_name','last_name','email','phone_num','password1','password2',)
+
+    def clean_email(self):
+        """
+        Validate that the supplied email address is unique for the
+        site.
+        
+        """
+        if User.objects.filter(email__iexact=self.cleaned_data['email']):
+            raise forms.ValidationError(_("This email address is already taken"))
+        return self.cleaned_data['email']
+
+    def clean_phone_num(self):
+        """
+        Clean and validate phone number from `models.DeviceUser` class
+        """
+        print self.cleaned_data['phone_num']
+        try:
+            Technician.objects.get(phone_num=self.cleaned_data['phone_num'])
+        except Technician.DoesNotExist:
+            print "doesNotExist"
+            return self.cleaned_data["phone_num"]
+        raise forms.ValidationError(("Phone number already exist"))
+
+    def save(self, commit=True):
+        if not commit:
+            raise NotImplementedError("Can't create User and UserProfile without database save")
+
+        user = super(UserCreationForm, self).save(commit=True)
+        # print self.cleaned_data["username"]
+        user.username = self.cleaned_data["username"]
+        user.first_name = self.cleaned_data["first_name"]
+        user.last_name = self.cleaned_data["last_name"]
+        user.email = self.cleaned_data["email"]
+        user.set_password(self.cleaned_data["password1"])
+
+        user.is_active = True # mark as active
+        user.is_staff = True  # mark as staff
+
+        if commit:
+            try:
+                user.save()
+            except:
+                raise forms.ValidationError("user profile saving failed")
+        else:
+            raise NotImplementedError("Can't create User and UserProfile without database save")
+            
+
+        '''
+        >>> from django.contrib.auth.models import User
+        >>> from register.models import Profile, DeviceUser
+        >>> amit = User.objects.create(username='amit')
+        >>> amit = User.objects.get(username='amit')
+        >>> amit_profile = Profile.object.get(user=amit)
+        >>> deviceuser = DeviceUser.objects.get(user=amit_profile)
+        >>> deviceuser.phone_num
+        u'992048445'
+
+        '''
+        
+        username = User.objects.get(username=self.cleaned_data["username"])
+        username_profile = Profile.objects.get(user=username)
+        technician = Technician.objects.create(user=username_profile)
+        # 
+        technician.phone_num = self.cleaned_data['phone_num']
+        # print deviceuser.phone_num
+
+        '''
+        profile = user.get_profile()
+        profile.serial_num = self.cleaned_data['serial_num']
+        profile.phone_num = self.cleaned_data['phone_num']
+        '''
+
+        if Group.objects.exists():
+            try:
+                Group.objects.get(name='technician')
+                # add user to group
+                technician_g = Group.objects.get(name='technician')
+                username = User.objects.get(username=user.username)
+                username.groups.add(technician_g)
+            except:
+                '''
+                aakash_user = Group(name="aakash_user")
+                aakash_user.save()
+                username = User.objects.get(username=user.username)
+                username.groups.add(aakash_user)
+                '''
+                # create group
+                Group.objects.create(name='technician')
+                technician_g = Group.objects.get(name='technician')
+                # add user to group
+                username = User.objects.get(username=user.username)
+                username.groups.add(technician_g)
+        else:
+            print "no Groups exists"
+                    
+        if commit:
+            try:                # save user and profile
+                technician.save()
+            except:
+                raise forms.ValidationError("Saving of technician failed")
+        return user, technician
+
 
 class LogComplaint(ModelForm):
     """
@@ -199,41 +322,5 @@ class RegisterForm():
 '''
 sac = User.objects.get(username='sachin')
 sac.userprofile.user.groups.values_list()
-
-
-class TechnicianRegister(UserCreationForm):
-    """
-    form for technician
-    """
-    phone_num = forms.IntegerField(max_value=9999999999, required=True)
-
-    class Meta:
-        model = User
-        fields = ('username','first_name','last_name','email','phone_num','password1','password2')
-
-    def save(self, commit=True):
-        if not commit:
-            raise NotImplementedError("Can't create technician and TechnicianProfile without database save")
-
-        technician = super(UserCreationForm, self).save(commit=True)
-        technician.username = self.cleaned_data["username"]
-        technician.first_name = self.cleaned_data["first_name"]
-        technician.last_name = self.cleaned_data["last_name"]
-        technician.email = self.cleaned_data["email"]
-        technician.set_password(self.cleaned_data["password1"])
-        technician.is_active = True
-        technician.is_staff = True
-        profile = technician.get_profile()
-        profile.phone_num = self.cleaned_data['phone_num']
-
-        if commit:
-            try:
-                profile.save()
-                technician.save()
-            except:
-                raise forms.ValidationError("serial number already exists")
-
-        return technician, profile
-
 
 '''

@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 
 from models import Profile, DeviceUser, Technician, Complaint
-from forms import RegisterDeviceUser, LogComplaint
+from forms import RegisterDeviceUser, LogComplaint, RegisterTechnician
 from logged_in import get_all_logged_in_users
 
 def index(request):
@@ -15,7 +15,7 @@ def index(request):
 
 def register(request):
     """
-    Generate user registration form
+    User registration form
     """
 
     # is user is already registered
@@ -46,6 +46,39 @@ def register(request):
                               context, 
                               context_instance=RequestContext(request))
 
+def register_technician(request):
+    """
+    Technician registration form
+    """
+
+    # is user is already registered
+    '''
+    if request.user.is_authenticated():
+    return HttpResponseRedirect('/profiles/home')
+    '''
+    # user is submitting the form
+    if request.method == 'POST':
+        form = RegisterTechnician(request.POST)
+        #profile = request.user.get_profile()
+        if form.is_valid():
+            user = form.save()
+            if user:
+                # success="<html>sign_up_success</html>"
+                # return HttpResponse(success)
+                #messages.info(request, "Thanks for registering. You are now logged in.")
+                user = authenticate(username=request.POST['username'],
+                                        password=request.POST['password1'])
+                login(request, user)
+                return HttpResponseRedirect('/profiles/home')
+    else:
+        # user is NOT submitting the from, show him a blank form
+        form = RegisterTechnician()
+
+    context = {'form':form}
+    return render_to_response('sign_up.html', 
+                              context, 
+                              context_instance=RequestContext(request))
+
 def complaint_form(request):
     """
     show complaint box after user logs in
@@ -67,23 +100,6 @@ def complaint_form(request):
     
     return render_to_response('complaint.html', 
                               context, 
-                              context_instance=RequestContext(request))
-
-def technician_register(request):
-    """
-    Generate technician registration form
-    """
-    if request.method == 'POST':
-        form = TechnicianRegister(request.POST)
-        if form.is_valid():
-            technician = form.save()
-            if technician:
-                success="<html>sign_up_success</html>"
-                return HttpResponse(success)
-    else:
-        form = TechnicianRegister()
-    return render_to_response('sign_up.html', 
-                              {'form':form}, 
                               context_instance=RequestContext(request))
 
 #def list(request, pID):
@@ -134,35 +150,36 @@ def user_home(request):
     '''
     
     user_group = request.user.groups.values_list('name',flat=True)
-    for group in user_group:
-        # print "Group: %s" % (group)
-        if group:
-            if group == "aakash_user":
-                print "%s belongs to %s group" %(request.user,group)
-                # print request.user
-                user_obj = users.get(username=request.user)
-                print user_obj
-                # if DeviceUser.objects.exists():
-                user_profile = Profile.objects.get(user=user_obj)
-                print user_profile
-                dev_obj = DeviceUser.objects.get(user=user_profile)
-                print dev_obj
-            elif group == "technician":
-                print "%s belongs to %s group" %(request.user,group)
-                # print request.user
-                user_obj = users.get(username=request.user)
-                print user_obj
-                # if DeviceUser.objects.exists():
-                user_profile = Profile.objects.get(user=user_obj)
-                print user_profile
-                dev_obj = DeviceUser.objects.get(user=user_profile)
-                print dev_obj
-        else:
-            print "%s dont belongs to any group"
+    if not user_group:
+        # if user don't belong to any group(ex: admin)
+        print "list is empty"
+        obj = None
+    else:
+        if user_group[0] == "aakash_user":
+            print "%s belongs to %s group" %(request.user,user_group[0])
+            # print request.user
+            user_obj = users.get(username=request.user)
+            print user_obj
+            # if DeviceUser.objects.exists():
+            user_profile = Profile.objects.get(user=user_obj)
+            print user_profile
+            obj = DeviceUser.objects.get(user=user_profile)
+            print obj
+        elif user_group[0] == "technician":
+            print "%s belongs to %s group" %(request.user,user_group[0])
+            # print request.user
+            user_obj = users.get(username=request.user)
+            print user_obj
+            # if DeviceUser.objects.exists():
+            user_profile = Profile.objects.get(user=user_obj)
+            print user_profile
+            obj = Technician.objects.get(user=user_profile)
+            print obj
 
+    
 
-    context = {'users':users, 
-               'dev_obj':dev_obj,
+    context = {'users':users,
+               'dev_obj':obj,
                'user_group':user_group,
                }
     

@@ -1,6 +1,7 @@
 {% extends "base_site.html" %}
 {% load i18n %}
 
+
 {% block content %}
 <form action="." method="post">
   {% csrf_token %}
@@ -10,6 +11,7 @@
     <tr>
       <td>{{field.label_tag}}: {{field}}</td>
     </tr>
+    
     <tr>
       <td>{{field.errors}}</td>
     </tr>

@@ -155,6 +155,6 @@ LOGGING = {
     }
 }
 
-AUTH_PROFILE_MODULE = 'register.UserProfile'
+AUTH_PROFILE_MODULE = 'register.Profile'
 LOGIN_URL='/login/'
 #LOGIN_REDIRECT_URL = '/profiles/home'

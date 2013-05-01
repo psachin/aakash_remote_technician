@@ -2,12 +2,11 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User, Group
 from django import forms
 from django.forms import ModelForm
-from models import UserProfile
+from models import Profile, DeviceUser, Technician, Complaint
 
 from django.utils.translation import ugettext, ugettext_lazy as _
 
-
-class Register(UserCreationForm):
+class RegisterDeviceUser(UserCreationForm):
     """
     form for user
     """
@@ -41,28 +40,36 @@ class Register(UserCreationForm):
 
     def clean_serial_num(self):
         """
-        Clean and validate serial number from `models.UserProfile`
+        Clean and validate serial number from `models.DeviceUser`
         class
         
         ref:
         http://stackoverflow.com/questions/13036708/
         how-to-get-user-object-by-profile-field-value
+
+        tests:
+        
+        >>> user = User.objects.all()
+        >>> sachin = user.get(username='sachin')
+        >>> sachin.profile.deviceuser_set.get(serial_num='1088301283')
+        <DeviceUser: sachin>
         """
-        print self.cleaned_data['serial_num']
+
+        # print self.cleaned_data['serial_num']
         try:
-            UserProfile.objects.get(serial_num=self.cleaned_data['serial_num'])
-        except UserProfile.DoesNotExist:
+            DeviceUser.objects.get(serial_num=self.cleaned_data['serial_num'])
+        except DeviceUser.DoesNotExist:
             return self.cleaned_data["serial_num"]
         raise forms.ValidationError(("Serial number already exist"))
 
     def clean_phone_num(self):
         """
-        Clean and validate phone number from `models.UserProfile` class
+        Clean and validate phone number from `models.DeviceUser` class
         """
-        print self.cleaned_data['phone_num']
+        # print self.cleaned_data['phone_num']
         try:
-            UserProfile.objects.get(phone_num=self.cleaned_data['phone_num'])
-        except UserProfile.DoesNotExist:
+            DeviceUser.objects.get(phone_num=self.cleaned_data['phone_num'])
+        except DeviceUser.DoesNotExist:
             return self.cleaned_data["phone_num"]
         raise forms.ValidationError(("Phone number already exist"))
 
@@ -71,7 +78,7 @@ class Register(UserCreationForm):
             raise NotImplementedError("Can't create User and UserProfile without database save")
 
         user = super(UserCreationForm, self).save(commit=True)
-        print self.cleaned_data["username"]
+        # print self.cleaned_data["username"]
         user.username = self.cleaned_data["username"]
         user.first_name = self.cleaned_data["first_name"]
         user.last_name = self.cleaned_data["last_name"]
@@ -81,18 +88,94 @@ class Register(UserCreationForm):
         user.is_active = True # mark as active
         user.is_staff = True  # mark as staff
 
+        if commit:
+            try:
+                user.save()
+            except:
+                raise forms.ValidationError("user profile saving failed")
+        else:
+            raise NotImplementedError("Can't create User and UserProfile without database save")
+            
+
+        '''
+        >>> from django.contrib.auth.models import User
+        >>> from register.models import Profile, DeviceUser
+        >>> amit = User.objects.create(username='amit')
+        >>> amit = User.objects.get(username='amit')
+        >>> amit_profile = Profile.object.get(user=amit)
+        >>> deviceuser = DeviceUser.objects.get(user=amit_profile)
+        >>> deviceuser.phone_num
+        u'992048445'
+
+        '''
+        
+        username = User.objects.get(username=self.cleaned_data["username"])
+        username_profile = Profile.objects.get(user=username)
+        deviceuser = DeviceUser.objects.create(user=username_profile)
+        # 
+        deviceuser.serial_num = self.cleaned_data['serial_num']
+        # print deviceuser.serial_num
+        deviceuser.phone_num = self.cleaned_data['phone_num']
+        # print deviceuser.phone_num
+
+        '''
         profile = user.get_profile()
         profile.serial_num = self.cleaned_data['serial_num']
         profile.phone_num = self.cleaned_data['phone_num']
+        '''
 
+        if Group.objects.exists():
+            if Group.objects.get(name='aakash_user'):
+                # add user to group
+                aakash_user = Group.objects.get(name='aakash_user')
+                username = User.objects.get(username=user.username)
+                username.groups.add(aakash_user)
+            else:
+                '''
+                aakash_user = Group(name="aakash_user")
+                aakash_user.save()
+                username = User.objects.get(username=user.username)
+                username.groups.add(aakash_user)
+                '''
+                # create group
+                Group.objects.create(name='aakash_user')
+                aakash_user = Group.objects.get(name='aakash_user')
+                # add user to group
+                username = User.objects.get(username=user.username)
+                username.groups.add(aakash_user)
+        else:
+            print "no Groups exists"
+                    
         if commit:
             try:                # save user and profile
-                profile.save()
-                user.save()
+                deviceuser.save()
             except:
-                raise forms.ValidationError("Saving failed")
-        return user, profile
+                raise forms.ValidationError("Saving of DeviceUser failed")
+        return user, deviceuser
 
+
+class LogComplaint(ModelForm):
+    """
+    log complaint agains the device
+    """
+    complaint = forms.TextInput()
+    
+    class Meta:
+        model = Complaint
+        fields = ('complaint',)
+        exclude = {'username',}
+
+    def clean_complaint(self):
+        return self.cleaned_data['complaint']
+    
+    def save(self, commit=True):
+        if not commit:
+            raise NotImplementedError("Can't create User and UserProfile without database save")
+        
+        print self.cleaned_data["complaint"]
+        
+
+    '''
     def group_save(self):
         user = super(UserCreationForm, self).save(commit=True)
         print "Username: %s" % (user.username)
@@ -111,6 +194,7 @@ class RegisterForm():
     class Meta:
         form = Register
     
+'''
 
 '''
 sac = User.objects.get(username='sachin')

@@ -6,8 +6,8 @@ from django.template import RequestContext
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 
-from models import UserProfile
-from forms import Register#, TechnicianRegister
+from models import Profile, DeviceUser, Technician, Complaint
+from forms import RegisterDeviceUser, LogComplaint
 from logged_in import get_all_logged_in_users
 
 def index(request):
@@ -25,11 +25,10 @@ def register(request):
     '''
     # user is submitting the form
     if request.method == 'POST':
-        form = Register(request.POST)
+        form = RegisterDeviceUser(request.POST)
         #profile = request.user.get_profile()
         if form.is_valid():
             user = form.save()
-            form.group_save()
             if user:
                 # success="<html>sign_up_success</html>"
                 # return HttpResponse(success)
@@ -40,10 +39,33 @@ def register(request):
                 return HttpResponseRedirect('/profiles/home')
     else:
         # user is NOT submitting the from, show him a blank form
-        form = Register()
+        form = RegisterDeviceUser()
 
     context = {'form':form}
     return render_to_response('sign_up.html', 
+                              context, 
+                              context_instance=RequestContext(request))
+
+def complaint_form(request):
+    """
+    show complaint box after user logs in
+    """
+    if request.method == 'POST':
+        form = LogComplaint(request.POST)
+        #profile = request.user.get_profile()
+        if form.is_valid():
+            user = form.save()
+            if user:
+                success="<html>Complaint registered</html>"
+                return HttpResponse(success)
+    else:
+        form = LogComplaint()
+
+    context = {
+        'form':form
+        }
+    
+    return render_to_response('complaint.html', 
                               context, 
                               context_instance=RequestContext(request))
 
@@ -99,15 +121,52 @@ def user_home(request):
     # if logged_in_users.is_authenticated():
     #     logged_in_user = logged_in_users
     # get profile for user = models.OneToOneField(User)
-    users_profile = request.user.get_profile()
-    user_group = request.user.groups.values_list('name',flat=True)
-    for groups in user_group:
-        print "Group: %s" % (groups)
+
+    '''
+    # print request.user
+    user_obj = users.get(username=request.user)
+    # print user_obj
+    # if DeviceUser.objects.exists():
+    user_profile = Profile.objects.get(user=user_obj)
+    # print user_profile
+    dev_obj = DeviceUser.objects.get(user=user_profile)
+    # print dev_obj
+    '''
     
+    user_group = request.user.groups.values_list('name',flat=True)
+    for group in user_group:
+        # print "Group: %s" % (group)
+        if group:
+            if group == "aakash_user":
+                print "%s belongs to %s group" %(request.user,group)
+                # print request.user
+                user_obj = users.get(username=request.user)
+                print user_obj
+                # if DeviceUser.objects.exists():
+                user_profile = Profile.objects.get(user=user_obj)
+                print user_profile
+                dev_obj = DeviceUser.objects.get(user=user_profile)
+                print dev_obj
+            elif group == "technician":
+                print "%s belongs to %s group" %(request.user,group)
+                # print request.user
+                user_obj = users.get(username=request.user)
+                print user_obj
+                # if DeviceUser.objects.exists():
+                user_profile = Profile.objects.get(user=user_obj)
+                print user_profile
+                dev_obj = DeviceUser.objects.get(user=user_profile)
+                print dev_obj
+        else:
+            print "%s dont belongs to any group"
+
+
     context = {'users':users, 
-               'users_profile':users_profile,
+               'dev_obj':dev_obj,
                'user_group':user_group,
                }
+    
+
     return render_to_response('registration/profile.html',
                               context,
                               context_instance=RequestContext(request))

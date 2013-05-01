@@ -2,20 +2,50 @@ from django.db import models
 from django.contrib.auth.models import User, Group
 from django.db.models.signals import post_save
 
-class UserProfile(models.Model):
+class Profile(models.Model):
     """
-    extended user profile
+    extended auth user profile
     """
     user = models.OneToOneField(User)
-    serial_num = models.CharField(max_length=10)
-    phone_num = models.BigIntegerField(null=True)
 
     def __unicode__(self):
         return "%s" % self.user
 
-def create_user_profile(sender, instance, created, **kwargs):  
+class DeviceUser(models.Model):
+    """
+    extended user profile for aakash users
+    """
+    user = models.ForeignKey(Profile)
+    serial_num = models.CharField(max_length=15)
+    phone_num = models.CharField(max_length=15)
+
+    def __unicode__(self):
+        return "%s" % (self.user)
+
+class Technician(models.Model):
+    """
+    extended technician profile
+    """
+    user = models.ForeignKey(Profile)
+    phone_num = models.CharField(max_length=15)
+    
+    def __unicode__(self):
+        return "%s" % (self.user)
+
+class Complaint(models.Model):
+    """
+    users complaints
+    """
+    user = models.ForeignKey(DeviceUser)
+    complaint = models.TextField()
+    
+    def __unicode__(self):
+        return "%s : %s" % (self.user, self.complaint)
+
+
+def create_profile(sender, instance, created, **kwargs):  
     if created == True:  
-        UserProfile.objects.get_or_create(user=instance)
+        Profile.objects.get_or_create(user=instance)
 
 '''
 class GroupProfile(models.Model):
@@ -37,5 +67,5 @@ def create_group_profile(sender, instance, created, **kwargs):
     if created == True:  
         GroupProfile.objects.get_or_create(group=instance)
 '''
-post_save.connect(create_user_profile, sender=User)
+post_save.connect(create_profile, sender=User)
 #post_save.connect(create_group_profile, sender=Group)

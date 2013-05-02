@@ -1,0 +1,29 @@
+{% extends "base_site.html" %}
+{% load i18n %}
+
+{% block content %}
+{% if obj %}
+<h1>List of users having complaints</h1>
+<table align=left border=1>
+  <tr>
+    <td><b>Username</b></td>
+    <td><b>Complaints</b></td>
+  </tr>
+{% for user in obj %}
+{% if user.complaint_set.count %}
+<tr>
+<td><a href="/complaint/{{user}}">{{user}}</a></td>
+<td>{{user.complaint_set.count}}</td>
+</tr>
+{% endif %}
+{% endfor %}
+</table>
+{% endif %}
+
+{% endblock %}
+
+{% comment %}
+{% for comp in user.complaint_set.values %}
+{{comp.complaint}}<br>
+{% endfor%}
+{% endcomment %}

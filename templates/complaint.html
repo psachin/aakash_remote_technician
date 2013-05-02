@@ -2,6 +2,11 @@
 {% load i18n %}
 
 {% block content %}
+{% if count %}
+<p>Your have {{count}} complaints </p>
+{% else %}
+<p>You dont have any complaints</p>
+{% endif %}
 <form action="." method="post">
   {% csrf_token %}
   {{ form.non_field_errors }}
@@ -16,6 +21,7 @@
     {% endfor %}
   </table>
   <input type="submit" value="Submit complaint"/>
+  <a href="/profiles/home">Home</a>
 </form>
 {% endblock %}
 

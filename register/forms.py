@@ -289,13 +289,24 @@ class LogComplaint(ModelForm):
         exclude = {'username',}
 
     def clean_complaint(self):
+        """
+        clean and validate complaints
+        """
         return self.cleaned_data['complaint']
     
-    def save(self, commit=True):
+    def save(self, username, commit=True):
         if not commit:
             raise NotImplementedError("Can't create User and UserProfile without database save")
+
+        username = User.objects.get(username=username)
+        user_profile = Profile.objects.get(user=username)
+        deviceuser = DeviceUser.objects.get(user=user_profile)
+        complaint = Complaint.objects.create(user=deviceuser)
+        complaint.complaint = self.cleaned_data["complaint"]
         
-        print self.cleaned_data["complaint"]
+        if commit:
+            complaint.save()
+        return complaint
         
 
     '''

@@ -17,14 +17,24 @@ you don't belong to any group
 <p>Last name: <b>{{ user.last_name }}</b></p>
 <p>Email: <b>{{ user.email }}</b></p>
 <p>Phone number: <b>{{ dev_obj.phone_num }}</b></p>
+
 {% for groups in user_group %}
 {% ifequal groups "aakash_user" %}
-<p>Device serial number: <b>{{ dev_obj.serial_num }}</b></p>
-<p><a href="/complaint/">log a complaint</a><p>
+<p></p>Device serial number: <b>{{ dev_obj.serial_num }}</b></p>
+{% if dev_obj.complaint_set.count %}
+<p>No. of complaints: <b>{{ dev_obj.complaint_set.count }}</b></p>
+{% else %}
+<p>You don't have any complaints !</p>
+{% endif %}
+<p><a href="/complaint">New complaint</a><p>
+{% else %}
+<hr>
+<p></p><a href="/tech/complaints">See user's complaints</a><p>
   {% endifequal %}
   {% endfor %}
-  
-<p></p>><a href="/logout">logout</a><p>
+<br>
+<p></p><a href="/logout">logout</a><p>
+
     
 
 

@@ -1,0 +1,28 @@
+{% extends "base_site.html" %}
+{% load i18n %}
+
+{% block content %}
+{% if obj %}
+{% if obj.complaint_set.count %}
+<h1>List complaints for {{username}}</h1>
+<table align=left border=1>
+  <tr>
+    <td><b>No</b></td>
+    <td><b>Complaint ID</b></td>
+    <td><b>Complaint descrption</b></td>
+  </tr>
+  {% for comp in obj.complaint_set.values %}
+  <tr>
+    <td>{{forloop.counter}}</td>
+    <td>{{comp.id}}</td>
+    <td>{{comp.complaint}}</td>
+  </tr>
+  {% endfor%}
+</table>
+{% else %}
+<h1>{{username}} has no complaints !</h1>
+{% endif %}
+{% endif %}
+{% endblock %}
+
+

@@ -1,19 +1,47 @@
-{% load admin_static %}<!DOCTYPE html>
+<!DOCTYPE html>
+{% comment %}
+{% load admin_static %}
+{% endcomment %}
+
+{% load staticfiles %}
+{% load i18n %}
 <html lang="{{ LANGUAGE_CODE|default:"en-us" }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
+
+
 <head>
 <title>{% block title %} {% endblock %}</title>
-<link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static "css/base.css" %}{% endblock %}" />
+<link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static "/static/css/base.css" %}{% endblock %}" />
+
 {% block extrastyle %}{% endblock %}
-<!--[if lte IE 7]><link rel="stylesheet" type="text/css" href="{% block stylesheet_ie %}{% static "admin/css/ie.css" %}{% endblock %}" /><![endif]-->
-{% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{% static "css/rtl.css" %}{% endblock %}" />{% endif %}
-<script type="text/javascript">window.__admin_media_prefix__ = "{% filter escapejs %}{% static "admin/" %}{% endfilter %}";</script>
+
+{% comment %}
+[if lte IE 7]><link rel="stylesheet" type="text/css" href="{% block stylesheet_ie %}{% static "admin/css/ie.css" %}{% endblock %}" /><![endif]
+{% endcomment %}
+
+{% if LANGUAGE_BIDI %}
+<link rel="stylesheet" 
+      type="text/css" 
+      href="{% block stylesheet_rtl %}
+	    {% static "/static/css/rtl.css" %}{% endblock %}" />
+{% endif %}
+
+{% comment %}
+<script type="text/javascript">
+  window.__admin_media_prefix__ = "{% filter escapejs %}{% static
+  "/static/" %}{% endfilter %}";
+</script>
+{% endcomment %}
+
+{% block extra_js_top %}{% endblock %}
 {% block extrahead %}{% endblock %}
+
 {% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE" />{% endblock %}
+
 </head>
-{% load i18n %}
+
+
 
 <body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}">
-
 <!-- Container -->
 <div id="container">
 
@@ -35,7 +63,7 @@
                 {% if user.has_usable_password %}
                 <a href="{% url 'admin:password_change' %}">{% trans 'Change password' %}</a> /
                 {% endif %}
-                <a href="{% url 'admin:logout' %}">{% trans 'Log out' %}</a>
+                <a href="{% url 'register.views.logout_view' %}">{% trans 'Log out' %}</a>
             {% endblock %}
         </div>
         {% endif %}
@@ -45,9 +73,11 @@
 
     {% block breadcrumbs %}
     <div class="breadcrumbs">
-    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    {% if user.is_active and user.is_staff %}  
+    <a href="{% url 'register.views.user_home' %}">{% trans 'Home' %}</a>
     {% if title %} &rsaquo; {{ title }}{% endif %}
     </div>
+    {% endif %}
     {% endblock %}
     {% endif %}
 

@@ -2,6 +2,7 @@
 {% load i18n %}
 
 {% block content %}
+<br>
 <h1>List of registered users</h1>
 <table align=left border=1>
   <tr>
@@ -22,12 +23,17 @@
       None
       {% endif %}
     </td>
-    
   </tr>
   {% endfor %}
 </table>
+
+
 {% endblock %}
 
-<!-- {{ user_profile.serial_num }} -->
-<!-- {{ user_profile.user }} -->
+
+{% comment %}
+{{ user_profile.serial_num }}
+{{ user_profile.user }}
+{% endcomment %}
+
 

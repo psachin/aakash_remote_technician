@@ -2,6 +2,9 @@ from django.db import models
 from django.contrib.auth.models import User, Group
 from django.db.models.signals import post_save
 
+from datetime import datetime
+from taggit.managers import TaggableManager
+
 class Profile(models.Model):
     """
     extended auth user profile
@@ -37,11 +40,13 @@ class Complaint(models.Model):
     users complaints
     """
     user = models.ForeignKey(DeviceUser)
+    when = models.DateField(null=True, blank=True)
+    start = models.TimeField(null=True, blank=True)
+    end = models.TimeField(null=True, blank=True)
     complaint = models.TextField()
     
     def __unicode__(self):
         return "%s : %s" % (self.user, self.complaint)
-
 
 def create_profile(sender, instance, created, **kwargs):  
     if created == True:  

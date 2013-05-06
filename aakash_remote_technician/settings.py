@@ -13,12 +13,20 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'rt',                      # Or path to database file if using sqlite3.
+        'ENGINE': 'django.db.backends.mysql',  # Add
+                                               # 'postgresql_psycopg2',
+                                               # 'mysql', 'sqlite3' or
+                                               # 'oracle'.
+        'NAME': 'rt',                          # Or path to database file
+                                               # if using sqlite3.
         'USER': 'sachin',                      # Not used with sqlite3.
         'PASSWORD': 'sachin',                  # Not used with sqlite3.
-        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+        'HOST': '',                      # Set to empty string for
+                                         # localhost. Not used with
+                                         # sqlite3.
+        'PORT': '',                      # Set to empty string for
+                                         # default. Not used with
+                                         # sqlite3.
     }
 }
 
@@ -26,7 +34,7 @@ DATABASES = {
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
 # In a Windows environment this must be set to your system time zone.
-TIME_ZONE = 'America/Chicago'
+TIME_ZONE = 'Asia/Calcutta'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -98,6 +106,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
 ROOT_URLCONF = 'aakash_remote_technician.urls'
@@ -124,6 +133,9 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     'django.contrib.admindocs',
     'register',
+#    'taggit',
+#    'south',
+    'debug_toolbar',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -156,5 +168,24 @@ LOGGING = {
 }
 
 AUTH_PROFILE_MODULE = 'register.Profile'
-LOGIN_URL='/login/'
+LOGIN_URL = '/login/'
 #LOGIN_REDIRECT_URL = '/profiles/home'
+INTERNAL_IPS = ('127.0.0.1',
+                '10.101.30.27',)
+
+DEBUG_TOOLBAR_PANELS = (
+    'debug_toolbar.panels.version.VersionDebugPanel',
+    'debug_toolbar.panels.timer.TimerDebugPanel',
+    'debug_toolbar.panels.settings_vars.SettingsVarsDebugPanel',
+    'debug_toolbar.panels.headers.HeaderDebugPanel',
+    'debug_toolbar.panels.request_vars.RequestVarsDebugPanel',
+    'debug_toolbar.panels.template.TemplateDebugPanel',
+    'debug_toolbar.panels.sql.SQLDebugPanel',
+    'debug_toolbar.panels.signals.SignalDebugPanel',
+    'debug_toolbar.panels.logger.LoggingPanel',
+    )
+
+# setting for django-debug-toolbar
+DEBUG_TOOLBAR_CONFIG = {
+    'INTERCEPT_REDIRECTS':False, # if redirected new page, don't show toolbar warning
+    }

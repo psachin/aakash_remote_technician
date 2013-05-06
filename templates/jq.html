@@ -1,0 +1,29 @@
+{% extends "base_site.html" %}
+{% comment %}
+{% extends "base_site.html" %}
+{% endcomment %}
+
+<!doctype html>
+  <head>
+    <meta charset="utf-8" />
+    <title>jQuery UI Datepicker - Default functionality</title>
+    <link rel="stylesheet"
+	  href="/static/js/jquery-ui.css"
+	  />
+    <script src="/static/js/jquery-1.9.1.js"></script>
+    <script src="/static/js/jquery-ui.js"></script>
+
+    <script>
+      $(function() {
+      $( "#datepicker" ).datepicker();
+      });
+    </script>
+  </head>
+
+{% block content %}
+    <p>Date: <input type="text" id="datepicker" /></p>
+{% endblock %}
+
+{% comment %}
+href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css"
+{% endcomment %}

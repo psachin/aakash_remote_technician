@@ -111,10 +111,6 @@ def login_view(request):
 @login_required
 def user_home(request):
     users = User.objects.all()
-
-
-
-    
     # logged_in_users = request.user
     # if logged_in_users.is_authenticated():
     #     logged_in_user = logged_in_users
@@ -255,12 +251,13 @@ def logout_view(request):
     logout_then_login(request)
     return HttpResponseRedirect('/')
 
+def jq(request):
+    """
+    jq tesing
+    """
+    return render_to_response("jq.html")
+
+    
 
 
-
-
-
-
-
-
-
+     

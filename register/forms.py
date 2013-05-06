@@ -1,10 +1,13 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User, Group
 from django import forms
-from django.forms import ModelForm
+from django.forms import ModelForm, widgets
 from models import Profile, DeviceUser, Technician, Complaint
 
 from django.utils.translation import ugettext, ugettext_lazy as _
+from django.contrib.admin import widgets 
+
+from datetime import datetime, date
 
 class RegisterDeviceUser(UserCreationForm):
     """
@@ -126,26 +129,30 @@ class RegisterDeviceUser(UserCreationForm):
         '''
 
         if Group.objects.exists():
-            if Group.objects.get(name='aakash_user'):
+            try:
+                Group.objects.get(name='aakash_user')
                 # add user to group
                 aakash_user = Group.objects.get(name='aakash_user')
                 username = User.objects.get(username=user.username)
                 username.groups.add(aakash_user)
-            else:
-                '''
-                aakash_user = Group(name="aakash_user")
-                aakash_user.save()
-                username = User.objects.get(username=user.username)
-                username.groups.add(aakash_user)
-                '''
+            except:
+                print "Group other than aakash_user"
                 # create group
                 Group.objects.create(name='aakash_user')
-                aakash_user = Group.objects.get(name='aakash_user')
                 # add user to group
+                aakash_user = Group.objects.get(name='aakash_user')
                 username = User.objects.get(username=user.username)
                 username.groups.add(aakash_user)
         else:
-            print "no Groups exists"
+            print "no group exists"
+            print "creating Group: aakash_user"
+            # create group
+            Group.objects.create(name='aakash_user')
+            # add user to group
+            aakash_user = Group.objects.get(name='aakash_user')
+            username = User.objects.get(username=user.username)
+            username.groups.add(aakash_user)
+
                     
         if commit:
             try:                # save user and profile
@@ -267,7 +274,14 @@ class RegisterTechnician(UserCreationForm):
                 username = User.objects.get(username=user.username)
                 username.groups.add(technician_g)
         else:
-            print "no Groups exists"
+            print "no Group exists"
+            print "creating Group: technician"
+            # create group
+            Group.objects.create(name='technician')
+            # add user to group
+            technician_g = Group.objects.get(name='technician')
+            username = User.objects.get(username=user.username)
+            username.groups.add(technician_g)
                     
         if commit:
             try:                # save user and profile
@@ -281,13 +295,61 @@ class LogComplaint(ModelForm):
     """
     log complaint agains the device
     """
+    when = forms.DateField(label="When(mm/dd/YYYY)")
+    #when = widgets.AdminDateWidget()
+    start = forms.TimeInput()
+    end = forms.TimeInput()
+    # end = forms.DateTimeField(widget=widgets.AdminSplitDateTime)
     complaint = forms.TextInput()
-    
+
+
     class Meta:
         model = Complaint
-        fields = ('complaint',)
+        fields = ('when','start','end','complaint',)
         exclude = {'username',}
 
+    def clean_when(self):
+        """
+        clean the date field
+        """
+        # print "WHEN: %s" % (self.cleaned_data["when"])
+        # print type(self.cleaned_data["when"])
+        # nn = datetime.strptime(self.cleaned_data["when"],"%Y-%d-%m")
+        n = date.today()
+        if self.cleaned_data["when"] < n:
+            raise forms.ValidationError("Date can't be lower than today's date: %s" % (datetime.strftime(n,"%m/%d/%Y")))
+        else:
+            return self.cleaned_data["when"]
+    
+    def clean_start(self):
+        """
+        validate start time
+        """
+        try:
+            self.cleaned_data["start"]
+            try:
+                self.when_start = datetime.combine(self.clean_when(), self.cleaned_data["start"])
+                # print self.when_start
+            except:
+                raise forms.ValidationError("this field is required.")
+        except:
+            raise forms.ValidationError("this field is required.")
+        return self.cleaned_data["start"]
+
+    def clean_end(self):
+        """
+        validate end time
+        """
+        try:
+            self.cleaned_data["end"]
+            try:
+                self.when_end = datetime.combine(self.clean_when(), self.cleaned_data["end"])
+            except:
+                raise forms.ValidationError("this field is required.")
+        except:
+            raise forms.ValidationError("this field is required.")
+        return self.cleaned_data["end"]
+                             
     def clean_complaint(self):
         """
         clean and validate complaints
@@ -303,6 +365,12 @@ class LogComplaint(ModelForm):
         deviceuser = DeviceUser.objects.get(user=user_profile)
         complaint = Complaint.objects.create(user=deviceuser)
         complaint.complaint = self.cleaned_data["complaint"]
+        
+        complaint.when = self.cleaned_data["when"]
+        complaint.start = self.cleaned_data["start"]
+        complaint.end = self.cleaned_data["end"]
+        print self.when_end - self.when_start
+        # print "Difference in time: %s" % (complaint.end - complaint.start)
         
         if commit:
             complaint.save()

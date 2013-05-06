@@ -3,7 +3,7 @@
 {% block content %}
 <h1>Welcome {{ user.username }}!</h1>
 {% if user_group %}
-you belongs to 
+you belong to 
 {% for groups in user_group %}
 <b>{{groups}}</b>
 {% endfor%} group
@@ -22,11 +22,11 @@ you don't belong to any group
 {% ifequal groups "aakash_user" %}
 <p></p>Device serial number: <b>{{ dev_obj.serial_num }}</b></p>
 {% if dev_obj.complaint_set.count %}
-<p>No. of complaints: <b>{{ dev_obj.complaint_set.count }}</b></p>
+<p>No. of complaints: <b>{{ dev_obj.complaint_set.count}}</b> (<b><a href="/complaint/{{user.username}}">view</a></b>)</p>
 {% else %}
 <p>You don't have any complaints !</p>
 {% endif %}
-<p><a href="/complaint">New complaint</a><p>
+<p><a href="/complaint"><b>New complaint</b></a><p>
 {% else %}
 <hr>
 <p></p><a href="/tech/complaints">See user's complaints</a><p>

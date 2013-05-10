@@ -1,10 +1,9 @@
 {% extends "base_site.html" %}
-{% load i18n %}
 
 {% block content %}
 {% if obj %}
 {% if obj.complaint_set.count %}
-<h1>List complaints by {{username}}</h1>
+<h1>List complaints by {{username|capfirst}}</h1>
 <table align=left border=1>
   <tr>
     <td><b>No</b></td>
@@ -23,13 +22,56 @@
     <td>{{comp.when}}</td>
     <td>{{comp.start}}</td>
     <td>{{comp.end}}</td>
+    {% if comp.technician_id %}
+    {% for technician in technician_group.user_set.values %}
+    {% ifequal comp.technician_id technician.id %}
+    <td>{{technician.username}} <a href="/shell">shell</a></td>
+    {% endifequal %}
+    {% endfor %}
+    {% else %}
+
+    {% ifequal user_group "aakash_user" %}
+    <td>None</td>
+    {% else %}
+    <td>(Not assigned) <a href="/assign/{{obj.id}}/{{comp.id}}/{{user.id}}">Take complaint</td>
+    {% endifequal %}
+
+    {% endif %}
   </tr>
-  {% endfor%}
+  {% endfor %}
 </table>
 {% else %}
-<h1>{{username}} has no complaints !</h1>
+<h1>{{username|capfirst}} has no complaints !</h1>
 {% endif %}
 {% endif %}
+
+<hr>
+<br>
+
 {% endblock %}
 
 
+
+{% comment %}
+
+{% for technician in technician_group.user_set.values %}
+{% ifequal comp.technician_id technician.id %}
+<td>{{comp.technician_id}}, {{technician.username}}</td>
+{% endifequal %}
+{% endfor %}
+
+<td>(Not assigned) <a href="/assign/{{obj.id}}/{{comp.id}}/{{user.id}}">Take complaint</td>
+
+{% for tg in technician_group.user_set.values %}
+{{tg.id}}
+{% endfor %}
+
+{% for user in all_users %}
+{{user.id}}
+{% endfor %}
+
+{% for tech in technician_obj %}
+{{tech}}
+{% endfor %}
+
+{% endcomment %}

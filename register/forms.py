@@ -306,7 +306,7 @@ class LogComplaint(ModelForm):
     class Meta:
         model = Complaint
         fields = ('when','start','end','complaint',)
-        exclude = {'username',}
+        exclude = {'username','technician'}
 
     def clean_when(self):
         """

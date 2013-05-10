@@ -44,6 +44,7 @@ class Complaint(models.Model):
     start = models.TimeField(null=True, blank=True)
     end = models.TimeField(null=True, blank=True)
     complaint = models.TextField()
+    technician = models.ForeignKey(Profile, null=True) 
     
     def __unicode__(self):
         return "%s : %s" % (self.user, self.complaint)

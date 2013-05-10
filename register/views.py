@@ -184,6 +184,7 @@ def complaint_form(request):
             if user:
                 success="<html>Complaint registered</html>"
                 return HttpResponse(success)
+            
     else:
         # print request.user
         form = LogComplaint()
@@ -202,15 +203,20 @@ def complaint_form(request):
 
 @login_required
 def handle_complaint(request):
-    aakash_users = Group.objects.get(name='aakash_user')
-    # print aakash_users.user_set.count()
-    all_users = aakash_users.user_set.all()
-    obj = []
-    for ur in all_users:
-        user_obj = User.objects.get(username=ur)
-        user_profile = Profile.objects.get(user=user_obj)
-        obj.append(DeviceUser.objects.get(user=user_profile))
-#        print "%s: %s" %(ur,obj.complaint_set.count())
+    
+    try:
+        aakash_users = Group.objects.get(name='aakash_user')
+        # print aakash_users.user_set.count()
+        all_users = aakash_users.user_set.all()
+        obj = []
+        for ur in all_users:
+            user_obj = User.objects.get(username=ur)
+            user_profile = Profile.objects.get(user=user_obj)
+            obj.append(DeviceUser.objects.get(user=user_profile))
+            # print "%s: %s" %(ur,obj.complaint_set.count())
+    except Group.DoesNotExist:
+        all_users = None
+        obj = []
 
     context = {
         'obj':obj,
@@ -225,15 +231,31 @@ def user_complaints(request, username):
     """
     list compaints of a user
     """
+    user_group = request.user.groups.values_list('name',flat=True)[0]
     user_obj = User.objects.get(username=username)
     user_profile = Profile.objects.get(user=user_obj)
-    obj = DeviceUser.objects.get(user=user_profile)
-    # print obj.complaint_set.count()
+    deviceuser_obj = DeviceUser.objects.get(user=user_profile)
+    #technician_group = Group.objects.get(name='technician')
+    complaint_obj = Complaint.objects.all()
+    technician_obj = Technician.objects.all()
+
+    # initial setting: if no technician has registered
+    try:
+        technician_group = Group.objects.get(name='technician')
+    except:
+        technician_group = None
+        print "technician group dont exist"
+    #print obj.complaint_set.count()
     # print username
+    # all_users = User.objects.all()
 
     context = {
         'username':username,
-        'obj':obj,
+        'obj':deviceuser_obj,
+        'technician_obj':technician_obj,
+        'user_group':user_group,
+        'technician_group':technician_group,
+        'complaint_obj':complaint_obj,
         # 'all_users':all_users,
         }
     return render_to_response('user_complaints.html',
@@ -250,6 +272,33 @@ def render_logged_in_user_list(request):
 def logout_view(request):
     logout_then_login(request)
     return HttpResponseRedirect('/')
+
+def assign(request, user_id, complaint_id, technician_id):
+    """
+    take un-assigned complaint from user
+    
+    required parameters: user_id, complaint_id and technician_id
+    """
+
+    '''
+    first = Complaint.objects.filter(user_id=1,id=1)
+    first.update(technician=2)
+    '''
+    print user_id
+    print complaint_id
+    print technician_id
+
+    user_complaint = Complaint.objects.filter(user_id=user_id,id=complaint_id)
+    user_complaint.update(technician=technician_id)
+
+    '''
+    user_obj = User.objects.get(username=username)
+    user_profile = Profile.objects.get(user=user_obj)
+    obj = DeviceUser.objects.get(user=user_profile)
+    '''
+    
+    return HttpResponseRedirect('/profiles/home')
+    
 
 def jq(request):
     """

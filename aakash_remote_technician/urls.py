@@ -8,7 +8,6 @@ urlpatterns = patterns('',
                        # Examples
                        #url(r'^$','register.views.index'),
                        # url(r'^aakash_remote_technician/', include('aakash_remote_technician.register.urls')),
-                       
                        # Uncomment the admin/doc line below to enable admin documentation
                        url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
                        # Uncomment the next line to enable the admin
@@ -16,17 +15,25 @@ urlpatterns = patterns('',
                        # custom URLs
                        # url(r'^list/(?P<pID>\d+)/$','register.views.list'),
                        url(r'^list/$','register.views.list'),
+                       url(r'^logged_in', 'register.views.render_logged_in_user_list'),
+                       # user regi
                        url(r'^register/$','register.views.register'),
                        url(r'^tr/$','register.views.register_technician'),
+                       # login
                        url(r'^$','django.contrib.auth.views.login', 
                            {'template_name': 'registration/login.html'}
                            ),
+                       # logout
                        url(r'^logout/$','register.views.logout_view'),
+                       # user's home
                        url(r'^profiles/home', 'register.views.user_home'),
-                       url(r'^logged_in', 'register.views.render_logged_in_user_list'),
                        # complaint
                        url(r'^complaint/(?P<username>\w+)/$','register.views.user_complaints'),
+                       # take complaint from user
+                       url(r'^assign/(?P<user_id>\d+)/(?P<complaint_id>\d+)/(?P<technician_id>\d+)/$','register.views.assign'),
+                       # complaint form
                        url(r'^complaint/$','register.views.complaint_form'),
+                       # 
                        url(r'^tech/complaints/$','register.views.handle_complaint'),
                        # password reset
                        url(r'resetpassword/passwordreset/$','django.contrib.auth.views.password_reset_done'),
@@ -36,3 +43,6 @@ urlpatterns = patterns('',
                        # jq testing
                        url(r'^jq/$','register.views.jq'),
                        )
+
+
+

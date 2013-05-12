@@ -296,9 +296,12 @@ def assign(request, user_id, complaint_id, technician_id):
     user_profile = Profile.objects.get(user=user_obj)
     obj = DeviceUser.objects.get(user=user_profile)
     '''
-    
     return HttpResponseRedirect('/profiles/home')
     
+@login_required
+def shell(request):
+    context = {}
+    return render_to_response("shell.html")
 
 def jq(request):
     """

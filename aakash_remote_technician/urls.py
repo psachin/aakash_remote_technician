@@ -42,6 +42,8 @@ urlpatterns = patterns('',
                        url(r'resetpassword/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)$','django.contrib.auth.views.password_reset_confirm'),
                        # jq testing
                        url(r'^jq/$','register.views.jq'),
+                       # shell access
+                       url(r'^shell/$','register.views.shell'),
                        )
 
 

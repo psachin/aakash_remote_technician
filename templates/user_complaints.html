@@ -23,11 +23,17 @@
     <td>{{comp.start}}</td>
     <td>{{comp.end}}</td>
     {% if comp.technician_id %}
+
     {% for technician in technician_group.user_set.values %}
     {% ifequal comp.technician_id technician.id %}
-    <td>{{technician.username}} <a href="/shell">shell</a></td>
+    {% ifequal technician.username user.username %}
+    <td>{{technician.username}} <a href="/shell"><font COLOR="009900">[Start debugging]</font></a></td>
+    {% else %}
+    <td>{{technician.username}}</td>
+    {% endifequal %}
     {% endifequal %}
     {% endfor %}
+
     {% else %}
 
     {% ifequal user_group "aakash_user" %}
@@ -47,7 +53,6 @@
 
 <hr>
 <br>
-
 {% endblock %}
 
 

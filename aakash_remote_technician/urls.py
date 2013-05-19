@@ -43,7 +43,7 @@ urlpatterns = patterns('',
                        # jq testing
                        url(r'^jq/$','register.views.jq'),
                        # shell access
-                       url(r'^shell/$','register.views.shell'),
+                       url(r'^shell/(?P<user_name>\w+)/(?P<complaint_id>\w+)/(?P<technician_id>\d+)/$','register.views.shell'),
                        )
 
 

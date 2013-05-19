@@ -7,21 +7,12 @@
   <head>
     <meta charset="utf-8" />
     <title>jQuery UI Datepicker - Default functionality</title>
-    <link rel="stylesheet"
-	  href="/static/js/jquery-ui.css"
-	  />
-    <script src="/static/js/jquery-1.9.1.js"></script>
-    <script src="/static/js/jquery-ui.js"></script>
 
-    <script>
-      $(function() {
-      $( "#datepicker" ).datepicker();
-      });
-    </script>
   </head>
 
 {% block content %}
-    <p>Date: <input type="text" id="datepicker" /></p>
+    <p>Date: <input type="text" id="id_when" /></p>
+    <p>Time: <input type="text" id="id_start" /></p>
 {% endblock %}
 
 {% comment %}

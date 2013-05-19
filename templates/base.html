@@ -37,6 +37,23 @@
 
 {% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE" />{% endblock %}
 
+
+    <meta charset="utf-8" />
+    <link rel="stylesheet"
+	  href="/static/js/jquery-ui.css"
+	  />
+    <script src="/static/js/jquery-1.9.1.js"></script>
+    <script src="/static/js/jquery-ui.js"></script>
+
+    <script src="/static/js/jtimep/jquery.timepicker.js"></script>
+    <script>
+      $(function() {
+      $( "#id_when" ).datepicker();
+      $( "#id_start" ).timePicker();
+      $( "#id_end" ).timePicker();
+      });
+    </script>
+
 </head>
 
 

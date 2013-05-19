@@ -203,6 +203,11 @@ def complaint_form(request):
 
 @login_required
 def handle_complaint(request):
+    #print request.user
+    technician = User.objects.filter(username=request.user) 
+    #print technician.values('id')
+    technician_complaint = Complaint.objects.filter(technician_id=technician.values_list('id'))
+    #print technician_complaint
     
     try:
         aakash_users = Group.objects.get(name='aakash_user')
@@ -221,6 +226,7 @@ def handle_complaint(request):
     context = {
         'obj':obj,
         'all_users':all_users,
+        'technician_complaint':technician_complaint,
         }
     return render_to_response('handle_complaints.html',
                               context,
@@ -299,9 +305,16 @@ def assign(request, user_id, complaint_id, technician_id):
     return HttpResponseRedirect('/profiles/home')
     
 @login_required
-def shell(request):
-    context = {}
-    return render_to_response("shell.html")
+def shell(request, user_name, complaint_id, technician_id):
+    """
+    
+    """
+    print user_name
+    print complaint_id
+    print technician_id
+    
+    context = {'user_name':user_name}
+    return render_to_response("shell.html", context)
 
 def jq(request):
     """
@@ -309,6 +322,7 @@ def jq(request):
     """
     return render_to_response("jq.html")
 
+    
     
 
 

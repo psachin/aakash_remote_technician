@@ -324,13 +324,11 @@ class LogComplaint(ModelForm):
     def clean_start(self):
         """
         validate start time
+
+        # self.when_start = datetime.combine(self.clean_when(), self.cleaned_data["start"])
         """
         try:
-            self.cleaned_data["start"]
-            try:
-                self.when_start = datetime.combine(self.clean_when(), self.cleaned_data["start"])
-                # print self.when_start
-            except:
+            if self.cleaned_data["start"] == None:
                 raise forms.ValidationError("this field is required.")
         except:
             raise forms.ValidationError("this field is required.")
@@ -339,12 +337,11 @@ class LogComplaint(ModelForm):
     def clean_end(self):
         """
         validate end time
+
+        # self.when_end = datetime.combine(self.clean_when(), self.cleaned_data["end"])
         """
         try:
-            self.cleaned_data["end"]
-            try:
-                self.when_end = datetime.combine(self.clean_when(), self.cleaned_data["end"])
-            except:
+            if self.cleaned_data["end"] == None:
                 raise forms.ValidationError("this field is required.")
         except:
             raise forms.ValidationError("this field is required.")
@@ -369,37 +366,11 @@ class LogComplaint(ModelForm):
         complaint.when = self.cleaned_data["when"]
         complaint.start = self.cleaned_data["start"]
         complaint.end = self.cleaned_data["end"]
-        print self.when_end - self.when_start
-        # print "Difference in time: %s" % (complaint.end - complaint.start)
-        
+        #print "Difference: ", self.when_end - self.when_start
+                
         if commit:
             complaint.save()
         return complaint
         
 
-    '''
-    def group_save(self):
-        user = super(UserCreationForm, self).save(commit=True)
-        print "Username: %s" % (user.username)
-        try:
-            aakash_user = Group.objects.get(name='aakash_user')
-            username = User.objects.get(username=user.username)
-            username.groups.add(aakash_user)
-        except:
-            aakash_user = Group(name="aakash_user")
-            aakash_user.save()
-            username = User.objects.get(username=user.username)
-            username.groups.add(aakash_user)
 
-
-class RegisterForm():
-    class Meta:
-        form = Register
-    
-'''
-
-'''
-sac = User.objects.get(username='sachin')
-sac.userprofile.user.groups.values_list()
-
-'''

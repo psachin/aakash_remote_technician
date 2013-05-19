@@ -21,6 +21,33 @@
 {% else %}
 <p align=center><b>Sorry, no users.</b></p>
 {% endif %}
+<hr>
+<br>
+<h1>Complaints assigned to you</h1>
+{% if technician_complaint %}
+<table align=left border=1>
+  <tr>
+    <td><b>No</b></td>
+    <td><b>Complaint ID</b></td>
+    <td><b>By (user)</b></td>
+    <td><b>Complaint descrption</b></td>
+    <td><b>Date</b></td>
+    <td><b>From</b></td>
+    <td><b>Debug</b></td>
+  </tr>
+{% for tc in technician_complaint %}
+<tr>
+  <td>{{forloop.counter}}</td>
+  <td>{{tc.id}}</td>
+  <td>{{tc.user}}</td>
+  <td>{{tc.when}}</td>
+  <td>{{tc.start}}</td>
+  <td>{{tc.end}}</td>
+  <td><a href="/shell/{{tc.user.id}}/{{tc.id}}/{{user.id}}">[start debug]</a></td>
+</tr>
+{% endfor technician_complaint %}
+</table>
+{% endif %}
 {% endblock %}
 
 {% comment %}

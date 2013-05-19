@@ -1,28 +1,5 @@
 {% extends "base_site.html" %}
 
-    <link rel="stylesheet"
-	  href="/static/js/jquery-ui.css"
-	  />
-
-    <link rel="stylesheet"
-	  href="/static/js/timepicker/jquery.timepicker.css"
-	  />
-
-    <script src="/static/js/jquery-1.9.1.js"></script>
-    <script src="/static/js/jquery-ui.js"></script>
-    <script src="/static/js/datepair.js"></script>
-    <script src="/static/js/timepicker/jquery.timepicker.js"></script>
-    <script src="/static/js/timepicker/jquery.timepicker.min.js"></script>
-    
-    <script>
-      $(function() {
-      $( "#id_when" ).datepicker();
-      $( "#id_ start" ).timepicker();
-      $( "#id_ end" ).timepicker();
-      });
-    </script>
-
-
 {% block content %}
 {% if count %}
 
@@ -38,14 +15,23 @@
     <tr>
       <td>{{field.label_tag}}: {{field}}</td>
     </tr>
+
+    {% if field.errors %}
     <tr>
       <td>{{field.errors}}</td>
     </tr>
+    {% endif %}
+
     {% endfor %}
   </table>
   <input type="submit" value="Submit complaint"/>
 {% comment %}
   <a href="/profiles/home">Home</a>
+    {% if field.errors %}
+    <tr>
+      <td>{{field.errors}}</td>
+    </tr>
+    {% endif %}
 {% endcomment %}
 </form>
 {% endblock %}

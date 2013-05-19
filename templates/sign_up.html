@@ -11,10 +11,11 @@
     <tr>
       <td>{{field.label_tag}}: {{field}}</td>
     </tr>
-    
+    {% if field.errors %}
     <tr>
       <td>{{field.errors}}</td>
     </tr>
+    {% endif %}
     {% endfor %}
   </table>
   <input type="submit" value="Sign Up"/>

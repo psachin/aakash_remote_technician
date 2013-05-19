@@ -27,7 +27,12 @@
     {% for technician in technician_group.user_set.values %}
     {% ifequal comp.technician_id technician.id %}
     {% ifequal technician.username user.username %}
-    <td>{{technician.username}} <a href="/shell"><font COLOR="009900">[Start debugging]</font></a></td>
+    <td>{{technician.username}} 
+      <a href="/shell/{{obj.user}}/{{comp.id}}/{{user.id}}">
+	<font COLOR="009900">[Start debugging]
+	</font>
+      </a>
+    </td>
     {% else %}
     <td>{{technician.username}}</td>
     {% endifequal %}
